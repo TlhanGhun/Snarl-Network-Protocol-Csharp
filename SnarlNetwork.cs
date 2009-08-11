@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace FileSystemSnarl.SnarlNetwork
+namespace SnarlNetworkProtocol
 {
-    class SnarlNetwork
+    class SNP
     {
         int response = 0;
 
