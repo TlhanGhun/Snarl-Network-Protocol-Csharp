@@ -11,6 +11,7 @@ class HelloSnarl
         string hostname = "127.0.0.1";
         int hostport = 9887;
         string appName = "HelloSnarlApp";
+
         //Icon can be both a valid url or icon from your harddisk.
         string icon = "http://a0.twimg.com/profile_images/1100695109/snarl_logo_2008a_normal.png";
 
