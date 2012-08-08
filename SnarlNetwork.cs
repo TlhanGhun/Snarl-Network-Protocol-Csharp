@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,110 +7,77 @@ namespace SnarlNetworkProtocol
 {
     class SNP
     {
-        int response = 0;
 
+        string hostName = null;
+        int hostPort = 0;
 
-        public SnarlNetwork(string hostName, int hostPort)
+        public void SnarlNetwork(string hostName, int hostPort)
         {
 
         }
 
-        public bool register(string hostName, int hostPort, string appName)
+        public SNP(string hostname, int hostport)
         {
+            this.hostName = hostname;
+            this.hostPort = hostport;
+        }
+
+        private static void SnarlNetwork(string hostName, int hostPort, string request)
+        {
+            int response = 0;
             IPAddress host = IPAddress.Parse(hostName);
             IPEndPoint hostep = new IPEndPoint(host, hostPort);
             Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
                 sock.Connect(hostep);
-                response = sock.Send(Encoding.ASCII.GetBytes("type=SNP#?version=1.0#?action=register#?app=" + appName));
-                response = sock.Send(Encoding.ASCII.GetBytes("\r\n"));
+                response = sock.Send(Encoding.UTF8.GetBytes(request));
+                response = sock.Send(Encoding.UTF8.GetBytes("\r\n"));
                 sock.Close();
             }
             catch (SocketException e)
             {
-                Console.WriteLine("Problem connecting to host");
+                Console.WriteLine("An error occurred when attempting to access the socket");
                 Console.WriteLine(e.ToString());
-                sock.Close();
+                if (sock.Connected)
+                    sock.Close();
             }
+
+        }
+
+
+        public bool register(string appName)
+        {
+            string request = "type=SNP#?version=1.0#?action=register#?app=" + appName;
+
+            SNP.SnarlNetwork(hostName, hostPort, request);
             return true;
         }
 
-        public bool unregister(string hostName, int hostPort,string appName)
+
+        public bool unregister(string appName)
         {
-            IPAddress host = IPAddress.Parse(hostName);
-            IPEndPoint hostep = new IPEndPoint(host, hostPort);
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                sock.Connect(hostep);
-                response = sock.Send(Encoding.ASCII.GetBytes("type=SNP#?version=1.0#?action=unregister#?app=" + appName));
-                response = sock.Send(Encoding.ASCII.GetBytes("\r\n"));
-                sock.Close();
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("Problem connecting to host");
-                Console.WriteLine(e.ToString());
-                if (sock.Connected)
-                {
-                    sock.Close();
-                }
-            }
+            string request = "type=SNP#?version=1.0#?action=unregister#?app=" + appName;
+
+            SNP.SnarlNetwork(hostName, hostPort, request);
             return true;
         }
 
-        public bool addClass(string hostName, int hostPort, string appName, string className, string classTitle)
+
+        public bool addClass(string appName, string className, string classTitle)
         {
-            IPAddress host = IPAddress.Parse(hostName);
-            IPEndPoint hostep = new IPEndPoint(host, hostPort);
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                sock.Connect(hostep);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("Problem connecting to host");
-                Console.WriteLine(e.ToString());
-                if (sock.Connected)
-                {
-                    sock.Close();
-                }
-            }
-            try {
-                response = sock.Send(Encoding.ASCII.GetBytes("type=SNP#?version=1.0#?action=add_class#?app=" + appName + "#?class=" + className + "#?title=" + classTitle));
-                response = sock.Send(Encoding.ASCII.GetBytes("\r\n"));
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            sock.Close();
+            string request  = "type=SNP#?version=1.0#?action=add_class#?app=" + appName + "#?class=" + className + "#?title=" + classTitle;
+
+            SNP.SnarlNetwork(hostName, hostPort, request);
             return true;
         }
 
-        public bool notify(string hostName, int hostPort, string appName, string className, string title, string text, string timeout)
+
+        public bool notify(string appName, string className, string title, string text, string timeout, string icon)
         {
-            IPAddress host = IPAddress.Parse(hostName);
-            IPEndPoint hostep = new IPEndPoint(host, hostPort);
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                sock.Connect(hostep);
-                response = sock.Send(Encoding.ASCII.GetBytes("type=SNP#?version=1.0#?action=notification#?app=" + appName + "#?class=" + className + "#?title=" + title + "#?text=" + text + "#?timeout=" + timeout));
-                response = sock.Send(Encoding.ASCII.GetBytes("\r\n"));
-                sock.Close();
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("Problem connecting to host");
-                Console.WriteLine(e.ToString());
-                if (sock.Connected)
-                {
-                    sock.Close();
-                }
-            }
+            string request = "type=SNP#?version=1.0#?action=notification#?app=" + appName + "#?class=" + className + "#?title=" + title + "#?text=" + text + "#?timeout=" + timeout + "#?icon=" + icon;
+
+            SNP.SnarlNetwork(hostName, hostPort, request);
             return true;
         }
 
