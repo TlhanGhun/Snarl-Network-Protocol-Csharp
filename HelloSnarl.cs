@@ -12,19 +12,16 @@ class HelloSnarl
         int hostport = 9887;
         string appName = "HelloSnarlApp";
 
-        //Icon can be both a valid url or icon from your harddisk.
         string icon = "http://a0.twimg.com/profile_images/1100695109/snarl_logo_2008a_normal.png";
 
         SNP snarl_object = new SNP(hostname, hostport);
 
-        //snarl_object.register(hostname, hostport, appName);
         snarl_object.register(appName);
 
         string title = "Notification from";
         string message = "HelloSnarl";
         string timeout = "5";
 
-        //snarl_object.notify(hostname, hostport, appName, null, title, message, timeout, icon);
         snarl_object.notify(appName, null, title, message, timeout, icon);
 
 
