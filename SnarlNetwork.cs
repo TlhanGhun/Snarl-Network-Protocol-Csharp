@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SnarlNetworkProtocol
@@ -8,8 +10,17 @@ namespace SnarlNetworkProtocol
     class SNP
     {
 
-        string hostName = null;
-        int hostPort = 0;
+        private string hostName = null;
+        private int hostPort = 0;
+        private string SnarlWindowClass  = "w>Snarl";
+        private string SnarlWindowName = "Snarl";
+        
+
+        [DllImport("user32.dll", SetLastError = false)]
+            internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+            internal static extern bool IsWindow(IntPtr hWnd);
 
         public void SnarlNetwork(string hostName, int hostPort)
         {
@@ -43,6 +54,15 @@ namespace SnarlNetworkProtocol
                     sock.Close();
             }
 
+        }
+
+        public bool isSnarlRunning()
+        {
+            IntPtr hwnd = FindWindow(SnarlWindowClass, SnarlWindowName);
+            if (IsWindow(hwnd))
+                return true;
+            else
+                return false;
         }
 
 
